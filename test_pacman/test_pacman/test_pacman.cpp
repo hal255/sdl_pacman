@@ -2,6 +2,7 @@
 using namespace std;
 
 #include "SDL.h"
+#include "SDL_image.h"
 
 void printString(string s) {
     printf("%s\n", s.c_str());
@@ -20,6 +21,41 @@ SDL_Renderer *makeRenderer(SDL_Window* window, int index, Uint32 flags) {
     return SDL_CreateRenderer(window, index, flags);
 }
 
+void loadPNG(SDL_Window* window, SDL_Renderer* renderer, string filePath) {
+    SDL_Surface *image;
+    image = IMG_Load(filePath.c_str());
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
+
+    bool quit = false;
+    SDL_Event event;
+
+    if (!image) {
+        printf("%s Image failed to load, error: %s\n", "p1_stand.png", IMG_GetError());
+    }
+    else {
+        while (!quit)
+        {
+            SDL_WaitEvent(&event);
+
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                quit = true;
+                break;
+            }
+
+            SDL_RenderCopy(renderer, texture, NULL, NULL);
+            SDL_RenderPresent(renderer);
+        }
+
+        SDL_DestroyTexture(texture);
+        SDL_FreeSurface(image);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+
+        SDL_Quit();
+    }
+}
 
 void runSDL() {
     SDL_Init(SDL_INIT_EVERYTHING);  // sets init state above all subsystems
@@ -28,18 +64,19 @@ void runSDL() {
         "title_pacman",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        600,
-        400,
+        1080,
+        640,
         SDL_WINDOW_SHOWN
     );
 
-    // window mainWindow, index -1 (first supported window), flags 0 (default)
+    // window mainWindow, index (-1 is first supported window), flags 0 (default)
     SDL_Renderer *mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
 
-    SDL_SetRenderDrawColor(mainRenderer, 0, 255, 0, 255);
-    SDL_RenderClear(mainRenderer);
-    SDL_RenderPresent(mainRenderer);
-    SDL_Delay(3000);
+    //SDL_SetRenderDrawColor(mainRenderer, 0, 255, 0, 255);
+    //SDL_RenderClear(mainRenderer);
+    //SDL_RenderPresent(mainRenderer);
+    //SDL_Delay(3000);
+    loadPNG(mainWindow, mainRenderer, "p1_stand.png");
 }
 
 

@@ -56,12 +56,13 @@ void myRect::pollEvents() {
 }
 
 void myRect::draw() const {
-    SDL_Rect rect;
-    rect.w = _w;
-    rect.h = _h;
-    rect.x = _x;
-    rect.y = _y;
-
-    SDL_SetRenderDrawColor(_renderer, 200, 0, 200, 255);
-    SDL_RenderFillRect(_renderer, &rect);
+    SDL_Rect rect = {_x, _y, _w, _h};
+    if (_texture) {
+        SDL_RenderCopy(_renderer, _texture, NULL, &rect);
+    }
+    else {
+        SDL_SetRenderDrawColor(_renderer, 50, 0, 250, 255);
+        SDL_RenderFillRect(_renderer, &rect);
+    }
+    //SDL_RenderFillRect(_renderer, &rect);
 }
